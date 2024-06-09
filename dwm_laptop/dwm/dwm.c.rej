@@ -1,0 +1,68 @@
+--- dwm.c
++++ dwm.c
+@@ -585,6 +601,7 @@ configurenotify(XEvent *e)
+ 					if (c->isfullscreen)
+ 						resizeclient(c, m->mx, m->my, m->mw, m->mh);
+ 				XMoveResizeWindow(dpy, m->barwin, m->wx, m->by, m->ww, bh);
++				XMoveResizeWindow(dpy, m->extrabarwin, m->wx, m->eby, m->ww, bh);
+ 			}
+ 			focus(NULL);
+ 			arrange(NULL);
+@@ -713,7 +731,7 @@ dirtomon(int dir)
+ void
+ drawbar(Monitor *m)
+ {
+-	int x, w, tw = 0;
++	int x, w, tw = 0, etwl = 0, etwr = 0;
+ 	int boxs = drw->fonts->h / 9;
+ 	int boxw = drw->fonts->h / 6 + 2;
+ 	unsigned int i, occ = 0, urg = 0;
+@@ -758,6 +776,17 @@ drawbar(Monitor *m)
+ 		}
+ 	}
+ 	drw_map(drw, m->barwin, 0, 0, m->ww, bh);
++
++	if (m == selmon) { /* extra status is only drawn on selected monitor */
++		drw_setscheme(drw, scheme[SchemeNorm]);
++		/* clear default bar draw buffer by drawing a blank rectangle */
++		drw_rect(drw, 0, 0, m->ww, bh, 1, 1);
++		etwr = TEXTW(estextr) - lrpad + 2; /* 2px right padding */
++		drw_text(drw, m->ww - etwr, 0, etwr, bh, 0, estextr, 0);
++		etwl = TEXTW(estextl);
++		drw_text(drw, 0, 0, etwl, bh, 0, estextl, 0);
++		drw_map(drw, m->extrabarwin, 0, 0, m->ww, bh);
++	}
+ }
+ 
+ void
+@@ -1838,14 +1876,22 @@ updatebars(void)
+ 	};
+ 	XClassHint ch = {"dwm", "dwm"};
+ 	for (m = mons; m; m = m->next) {
+-		if (m->barwin)
+-			continue;
+-		m->barwin = XCreateWindow(dpy, root, m->wx, m->by, m->ww, bh, 0, DefaultDepth(dpy, screen),
+-				CopyFromParent, DefaultVisual(dpy, screen),
+-				CWOverrideRedirect|CWBackPixmap|CWEventMask, &wa);
+-		XDefineCursor(dpy, m->barwin, cursor[CurNormal]->cursor);
+-		XMapRaised(dpy, m->barwin);
+-		XSetClassHint(dpy, m->barwin, &ch);
++		if (!m->barwin) {
++			m->barwin = XCreateWindow(dpy, root, m->wx, m->by, m->ww, bh, 0, DefaultDepth(dpy, screen),
++					CopyFromParent, DefaultVisual(dpy, screen),
++					CWOverrideRedirect|CWBackPixmap|CWEventMask, &wa);
++			XDefineCursor(dpy, m->barwin, cursor[CurNormal]->cursor);
++			XMapRaised(dpy, m->barwin);
++			XSetClassHint(dpy, m->barwin, &ch);
++		}
++		if (!m->extrabarwin) {
++			m->extrabarwin = XCreateWindow(dpy, root, m->wx, m->eby, m->ww, bh, 0, DefaultDepth(dpy, screen),
++					CopyFromParent, DefaultVisual(dpy, screen),
++					CWOverrideRedirect|CWBackPixmap|CWEventMask, &wa);
++			XDefineCursor(dpy, m->extrabarwin, cursor[CurNormal]->cursor);
++			XMapRaised(dpy, m->extrabarwin);
++			XSetClassHint(dpy, m->extrabarwin, &ch);
++		}
+ 	}
+ }
+ 
