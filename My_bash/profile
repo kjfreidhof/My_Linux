@@ -1,0 +1,102 @@
+# ~/.profile: executed by the command interpreter for login shells.
+# This file is not read by bash(1), if ~/.bash_profile or ~/.bash_login
+# exists.
+# see /usr/share/doc/bash/examples/startup-files for examples.
+# the files are located in the bash-doc package.
+
+# the default umask is set in /etc/profile; for setting the umask
+# for ssh logins, install and configure the libpam-umask package.
+#umask 022
+
+# if running bash
+if [ -n "$BASH_VERSION" ]; then
+    # include .bashrc if it exists
+    if [ -f "$HOME/.bashrc" ]; then
+	. "$HOME/.bashrc"
+    fi
+fi
+
+# set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/bin" ] ; then
+    PATH="$HOME/bin:$PATH"
+fi
+
+# set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/.local/bin" ] ; then
+    PATH="$HOME/.local/bin:$PATH"
+fi
+
+export PATH="/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games/:/usr/local/sbin/:/usr/sbin:/sbin"
+export console_font="Hebrew-Terminus32x16"
+export TTY=$(tty)
+export EDITOR="/usr/bin/vim"
+export PAGER="/usr/bin/less"
+
+
+
+if [ "$TTY" == /dev/tty1 ]; then 
+	echo "D: Dwm"
+	echo "S: Sway"
+	echo "E: exit"
+	read -rp "choose an option to launch [d/s/e]: " option
+	if [ "$option" == "D" ] || [ "$option" == "d" ]; then 		
+		startx
+
+	elif [ "$option"  == "S" ] || [ "$option" == "s" ]; then 
+		exec sway 
+
+	elif [ "$option" == "E" ] || [ "$option" == "e" ]; then
+		setfont "$console_font"
+	       return	
+		
+
+
+	fi
+
+
+	
+fi
+
+if [ "$TTY" == /dev/tty2 ]; then 
+	setfont "$console_font"
+
+
+
+fi 
+
+if [ "$tty" == /dev/tty3 ]; then 
+	setfont "$console_font"
+
+
+
+fi 
+
+
+if [ "$tty" == /dev/tty4 ]; then 
+	setfont "$console_font"
+
+
+fi
+
+if [ "$tty" == /dev/tty5 ]; then 
+	setfont "$console_font"
+
+
+
+fi
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+# Created by `pipx` on 2024-04-07 02:20:37
+export PATH="$PATH:/home/kjfreidhof/.local/bin"
